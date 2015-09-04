@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.wzh.learnanimat01" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/lianxi"
+        android:label="小练习"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".Main2Activity"
+            android:label="@string/title_activity_main2" >
+        </activity>
+        <activity
+            android:name=".Main3Activity"
+            android:label="@string/title_activity_main3" >
+            <intent-filter>
+                <action android:name="com.wzh.learnanimat01.Main3Activity.1" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Guid" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Main4Activity"
+            android:label="@string/title_activity_main4" >
+        </activity>
+    </application>
+
+</manifest>
