@@ -24,6 +24,14 @@ private boolean mAnswer;
         if (savedInstanceState!=null){
             mIsChrat=savedInstanceState.getBoolean("cheat");
         }
+        int APIVersion;
+        try {
+            APIVersion = Integer.valueOf(android.os.Build.VERSION.SDK);
+        } catch (NumberFormatException e) {
+            APIVersion = 0;
+        }
+        TextView textView= (TextView) findViewById(R.id.getAPI);
+        textView.setText("APIVersion is:"+String.valueOf(APIVersion));
         mAnswer=getIntent().getBooleanExtra(EXTRA_ANSWER_ISTRYUE, false);
         mTv= (TextView) findViewById(R.id.answerText);
         mShowAnswer= (Button) findViewById(R.id.showAnswerButton);

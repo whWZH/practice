@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             CurrentPositon=savedInstanceState.getInt(KEY_INDEX);
             mIsCheater=savedInstanceState.getBoolean("cheat");
         }
+
         mtext= (TextView)findViewById(R.id.m_text);
         mTrueButton= (Button) findViewById(R.id.true_button);
         mFalseButton= (Button) findViewById(R.id.false_button);
@@ -100,9 +101,9 @@ public class MainActivity extends AppCompatActivity {
         mCheat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MainActivity.this,cheat.class);
-                intent.putExtra(EXTRA_ANSWER_ISTRYUE,questions[CurrentPositon].getIsTure());
-                startActivityForResult(intent,0);
+                Intent intent = new Intent(MainActivity.this, cheat.class);
+                intent.putExtra(EXTRA_ANSWER_ISTRYUE, questions[CurrentPositon].getIsTure());
+                startActivityForResult(intent, 0);
             }
         });
         updataQuestion();
