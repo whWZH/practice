@@ -11,5 +11,10 @@
     <string name="question_test3">武汉是内陆城市</string>
     <string name="next_boptton">下一题</string>
     <string name="pre_botton">上一题</string>
+    <string name="warning">你确定要这样做吗</string>
+    <string name="show_answer_button">查看答案</string>
+    <string name="show_answer_toast">作弊是不对的</string>
+    <string name="cheat_button">作弊！</string>
+    <string name="title_activity_cheat">cheat</string>
 
 </resources>

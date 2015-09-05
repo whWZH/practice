@@ -26,6 +26,12 @@
             android:text="@string/false_button"
             android:id="@+id/false_button"/>
     </LinearLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cheat_button"
+        android:id="@+id/cheatButton"
+        android:layout_gravity="bottom|center"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
