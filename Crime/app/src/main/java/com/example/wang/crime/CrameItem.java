@@ -33,12 +33,14 @@ public class CrameItem extends Fragment {
     private Button mDataButton;
     private CheckBox mCheckBox;
     public CrameItem() {
-            item=new Item();
+           item=new Item();
         // Required empty public constructor
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+       UUID mID= (UUID) getArguments().getSerializable("mID");
+        item=CrimeLab.getsCrimeLab(getActivity()).getItem(mID);
     }
 
     @Override
@@ -59,7 +61,7 @@ public class CrameItem extends Fragment {
             }
             @Override
             public void afterTextChanged(Editable s) {
-
+                item.setmTitle(s.toString());
             }
         });
         mDataButton= (Button) v.findViewById(R.id.crime_data);
@@ -73,6 +75,20 @@ public class CrameItem extends Fragment {
                 item.setmSolved(isChecked);
             }
         });
+        mCheckBox.setChecked(item.getmSolved());
+        editText.setText(item.getmTitle());
         return v;
+    }
+
+    public static CrameItem newInstance(UUID mID) {
+
+        Bundle args = new Bundle();
+        args.putSerializable("mID",mID);
+        CrameItem fragment = new CrameItem();
+        fragment.setArguments(args);
+        return fragment;
+    }
+    public void returnResult(){
+        getActivity().setResult(Activity.RESULT_OK,null);
     }
 }

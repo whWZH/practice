@@ -10,4 +10,5 @@ public class ItemListActivity extends SingleFragmentActivity {
     protected Fragment creatFragment() {
         return new ItemListFragment();
     }
+
 }
