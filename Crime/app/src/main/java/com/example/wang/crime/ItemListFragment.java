@@ -31,7 +31,7 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Item i= mItems.get(position);
-        Intent intent=new Intent(getActivity(),ItemActivity.class);
+        Intent intent=new Intent(getActivity(),CrimePagerActivity.class);
         intent.putExtra("ID", i.getmId());
 //        startActivity(intent);
         startActivityForResult(intent,0);

@@ -1,9 +1,12 @@
 package com.example.wang.crime;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -15,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import java.text.DateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -26,7 +30,7 @@ import java.util.UUID;
  * Use the {@link CrameItem#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CrameItem extends Fragment {
+public class CrameItem extends android.support.v4.app.Fragment {
 
     private Item item;
     private EditText editText;
@@ -44,7 +48,7 @@ public class CrameItem extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v=inflater.inflate(R.layout.fragment_crame_item,container,false);
@@ -68,7 +72,15 @@ public class CrameItem extends Fragment {
         String dateS;
         dateS=DateFormat.getDateTimeInstance().format(item.getmData());
         mDataButton.setText(dateS);
-        mDataButton.setEnabled(false);
+        mDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                PickFragment pick= PickFragment.newInstance(item.getmData());
+                pick.setTargetFragment(CrameItem.this,0);
+                pick.show(fm,"date");
+            }
+        });
         mCheckBox= (CheckBox) v.findViewById(R.id.cerame_solve);
         mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -90,5 +102,17 @@ public class CrameItem extends Fragment {
     }
     public void returnResult(){
         getActivity().setResult(Activity.RESULT_OK,null);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode!=Activity.RESULT_OK) return;
+        if (requestCode==0){
+            Date date= (Date) data.getSerializableExtra("Date");
+            item.setmData(date);
+            String dateS;
+            dateS=DateFormat.getDateTimeInstance().format(item.getmData());
+            mDataButton.setText(dateS);
+        }
     }
 }
