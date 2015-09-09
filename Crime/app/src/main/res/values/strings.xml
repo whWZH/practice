@@ -12,4 +12,9 @@
     <string name="crime_solve">问题是否解决？</string>
     <string name="date_pick">设置犯罪日期</string>
     <string name="time_pick">设置犯罪时间</string>
+    <string name="new_crime">增加新记录</string>
+    <string name="show_subtitle">显示详细</string>
+    <string name="hide_subtitle">隐藏详情</string>
+    <string name="subtitle">如果你看到了什么，请说出来</string>
+    <string name="delete_crime">删除</string>
 </resources>

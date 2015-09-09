@@ -17,12 +17,6 @@ public class CrimeLab {
     private CrimeLab(Context context){
         mItems=new ArrayList<Item>();
         mAppcontext=context;
-        for (int i=0;i<100;i++){
-            Item c=new Item();
-            c.setmTitle("Crime #" +i);
-            c.setmSolved(i%2==0);
-            mItems.add(c);
-        }
     }
 
 
@@ -43,5 +37,8 @@ public class CrimeLab {
             }
         }
         return null;
+    }
+    public void addCrime(Item item){
+        mItems.add(item);
     }
 }
