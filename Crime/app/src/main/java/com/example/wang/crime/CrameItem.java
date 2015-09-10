@@ -132,4 +132,10 @@ public class CrameItem extends android.support.v4.app.Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.getsCrimeLab(getActivity()).sveItems();
+    }
 }
