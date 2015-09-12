@@ -1,15 +1,24 @@
 package com.example.wang.crime;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.drm.DrmStore;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.pdf.PdfRenderer;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +27,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -38,6 +51,11 @@ public class CrameItem extends android.support.v4.app.Fragment {
     private EditText editText;
     private Button mDataButton;
     private CheckBox mCheckBox;
+    private ImageButton mPhotoBurron;
+    private Uri imagetUri=null;
+    private int Take_PHOTO=999;
+    private int CROP_PHOTO=888;
+    private ImageView iv;
     public CrameItem() {
            item=new Item();
         // Required empty public constructor
@@ -80,9 +98,9 @@ public class CrameItem extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                PickFragment pick= PickFragment.newInstance(item.getmData());
-                pick.setTargetFragment(CrameItem.this,0);
-                pick.show(fm,"date");
+                PickFragment pick = PickFragment.newInstance(item.getmData());
+                pick.setTargetFragment(CrameItem.this, 0);
+                pick.show(fm, "date");
             }
         });
         mCheckBox= (CheckBox) v.findViewById(R.id.cerame_solve);
@@ -93,6 +111,34 @@ public class CrameItem extends android.support.v4.app.Fragment {
         });
         mCheckBox.setChecked(item.getmSolved());
         editText.setText(item.getmTitle());
+        mPhotoBurron= (ImageButton) v.findViewById(R.id.crime_imageButton);
+        mPhotoBurron.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Filename=item.getmId().toString();
+                File outputImage=new File(Environment.getExternalStorageDirectory(),Filename+".jpg");
+                 imagetUri=Uri.fromFile(outputImage);
+                Photo p=new Photo(imagetUri.toString());
+                item.setPhoto(p);
+                Intent i=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, imagetUri);
+                startActivityForResult(i,Take_PHOTO);
+            }
+        });
+        iv= (ImageView) v.findViewById(R.id.crime_imageView);
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Photo p=item.getmPhoto();
+                if (p==null){
+                    return;
+                }
+                FragmentManager fm=getActivity().getSupportFragmentManager();
+                String path=p.getFilename();
+                ImageFragment.newInstance(path).show(fm,"DIALOG_IMAGE");
+            }
+        });
+         registerForContextMenu(iv);
         return v;
     }
 
@@ -118,6 +164,21 @@ public class CrameItem extends android.support.v4.app.Fragment {
             dateS=DateFormat.getDateTimeInstance().format(item.getmData());
             mDataButton.setText(dateS);
         }
+        if (requestCode==Take_PHOTO){
+            Intent intent=new Intent("com.android.camera.action.CROP");
+            intent.setDataAndType(imagetUri, "image/*");
+            intent.putExtra("scale", true);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imagetUri);
+            startActivityForResult(intent, CROP_PHOTO);
+        }
+        if (requestCode==CROP_PHOTO){
+            try {
+                Bitmap bitmap= BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imagetUri));
+                iv.setImageBitmap(bitmap);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -137,5 +198,46 @@ public class CrameItem extends android.support.v4.app.Fragment {
     public void onPause() {
         super.onPause();
         CrimeLab.getsCrimeLab(getActivity()).sveItems();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Photo p=item.getmPhoto();
+        if (p==null){
+            return;
+        }
+        FragmentManager fm=getActivity().getSupportFragmentManager();
+        String path=p.getFilename();
+        imagetUri=Uri.parse(path);
+        Bitmap bitmap= null;
+        try {
+            bitmap = BitmapFactory.decodeStream(getActivity().getContentResolver().openInputStream(imagetUri));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        iv.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context,menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item1) {
+
+        switch (item1.getItemId()){
+            case R.id.menu_item_delete_crime:
+                if (item.getmPhoto()==null){
+                    return true;
+                }
+                Uri uri=Uri.parse(item.getmPhoto().getFilename());
+                File file=new File(uri.getPath());
+                file.delete();
+                item.setPhoto(null);
+                return true;
+        }
+        return super.onContextItemSelected(item1);
     }
 }

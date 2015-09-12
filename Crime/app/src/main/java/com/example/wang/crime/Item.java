@@ -5,7 +5,9 @@ import android.provider.ContactsContract;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.PhantomReference;
 import java.util.Date;
+import java.util.IllegalFormatCodePointException;
 import java.util.UUID;
 
 /**
@@ -16,10 +18,12 @@ public class Item {
     private static final String JSON_TITLE="title";
     private static final String JSON_SOLVED="solved";
     private static final String JSON_DATE="date";
+    private static final String JSON_PHOTO="photo";
     private UUID mId;
     private String mTitle;
     private Date mData=new Date();
     private boolean mSolved;
+    private Photo mPhoto;
     public Item(){
         mId=UUID.randomUUID();
     }
@@ -30,6 +34,9 @@ public class Item {
         json.put(JSON_TITLE,mTitle);
         json.put(JSON_DATE,mData.getTime());
         json.put(JSON_SOLVED,mSolved);
+        if (mPhoto!=null){
+            json.put(JSON_PHOTO,mPhoto.toJSON());
+        }
         return json;
     }
     public UUID getmId() {
@@ -65,5 +72,14 @@ public class Item {
         }
         mSolved=json.getBoolean(JSON_SOLVED);
         mData=new Date(json.getLong(JSON_DATE));
+        if (json.has(JSON_PHOTO)){
+            mPhoto=new Photo(json.getJSONObject(JSON_PHOTO));
+        }
+    }
+    public Photo getmPhoto(){
+        return mPhoto;
+    }
+    public void setPhoto(Photo p){
+        mPhoto=p;
     }
 }

@@ -1,10 +1,12 @@
 package com.example.wang.crime;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -62,4 +64,14 @@ public class CrimeLab {
             return false;
         }
     }
+    public void deleteCrime(Item item){
+        if (item.getmPhoto()!=null){
+            Uri uri=Uri.parse(item.getmPhoto().getFilename());
+            File file=new File(uri.getPath());
+            file.delete();
+        }
+        mItems.remove(item);
+        sveItems();
+    }
+
 }

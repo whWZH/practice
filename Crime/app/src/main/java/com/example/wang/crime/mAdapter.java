@@ -37,7 +37,7 @@ public class mAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return mList.get(position);
     }
 
     @Override
