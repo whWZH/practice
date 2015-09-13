@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.drm.DrmStore;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -32,6 +34,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -55,7 +58,10 @@ public class CrameItem extends android.support.v4.app.Fragment {
     private Uri imagetUri=null;
     private int Take_PHOTO=999;
     private int CROP_PHOTO=888;
+    private int REQUEST_CONTACT=777;
     private ImageView iv;
+    private Button mSuspectButton;
+    private Button  mDialBUTTON;
     public CrameItem() {
            item=new Item();
         // Required empty public constructor
@@ -129,16 +135,49 @@ public class CrameItem extends android.support.v4.app.Fragment {
         iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Photo p=item.getmPhoto();
-                if (p==null){
+                Photo p = item.getmPhoto();
+                if (p == null) {
                     return;
                 }
-                FragmentManager fm=getActivity().getSupportFragmentManager();
-                String path=p.getFilename();
-                ImageFragment.newInstance(path).show(fm,"DIALOG_IMAGE");
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                String path = p.getFilename();
+                ImageFragment.newInstance(path).show(fm, "DIALOG_IMAGE");
             }
         });
          registerForContextMenu(iv);
+        Button reportButton=(Button)v.findViewById(R.id.crime_reportButton);
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT,"犯罪记录");
+                i=Intent.createChooser(i,"发送犯罪记录");
+                startActivity(i);
+            }
+        });
+        mSuspectButton= (Button) v.findViewById(R.id.crime_suspectButton);
+        mSuspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(Intent.ACTION_PICK,ContactsContract.Contacts.CONTENT_URI);
+                startActivityForResult(i,REQUEST_CONTACT);
+            }
+        });
+        mDialBUTTON= (Button) v.findViewById(R.id.crime_dialButton);
+        if (item.getSuspect()!=null){
+            mSuspectButton.setText("犯罪嫌疑人是"+item.getSuspect());
+            mDialBUTTON.setText("打电话给"+item.getSuspect());
+        }
+        mDialBUTTON.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(Intent.ACTION_DIAL);
+                i.setData(Uri.parse("tel:"+item.getmNumber()));
+                startActivity(i);
+            }
+        });
         return v;
     }
 
@@ -151,7 +190,7 @@ public class CrameItem extends android.support.v4.app.Fragment {
         return fragment;
     }
     public void returnResult(){
-        getActivity().setResult(Activity.RESULT_OK,null);
+        getActivity().setResult(Activity.RESULT_OK, null);
     }
 
     @Override
@@ -178,6 +217,30 @@ public class CrameItem extends android.support.v4.app.Fragment {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+        if (requestCode==REQUEST_CONTACT){
+            Uri contactUri=data.getData();
+//            String[] queryFields=new String[]{
+//                    ContactsContract.Contacts.DISPLAY_NAME
+//            };
+            android.database.Cursor c=getActivity().getContentResolver().query(contactUri, null, null, null, null);
+            if (c.getCount()==0){
+                c.close();
+                return;
+            }
+            c.moveToFirst();
+            String suspect=c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneID=c.getString(c.getColumnIndex(ContactsContract.Contacts._ID));
+            Cursor phones = getActivity().getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID
+                    + "=" + phoneID, null, null);
+            phones.moveToFirst();
+            String suspectNumber=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            item.setmSuspect(suspect);
+            mSuspectButton.setText("犯罪嫌疑人是"+suspect);
+            item.setmNumber(suspectNumber);
+            mDialBUTTON.setText("打电话给"+suspect);
+            phones.close();
+            c.close();
         }
     }
 
@@ -221,7 +284,7 @@ public class CrameItem extends android.support.v4.app.Fragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context,menu);
+        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
     }
 
     @Override
@@ -240,4 +303,22 @@ public class CrameItem extends android.support.v4.app.Fragment {
         }
         return super.onContextItemSelected(item1);
     }
+    private String getCrimeReport(){
+    String solvedString=null;
+        if (item.getmSolved()){
+            solvedString="问题解决了";
+        }else {
+            solvedString="问题没有解决";
+        }
+        String dateString= DateFormat.getDateTimeInstance().format(item.getmData());
+        String suspect=item.getSuspect();
+        if (suspect==null){
+            suspect="没有犯罪嫌疑人";
+        }else {
+            suspect=getString(R.string.crime_report_susupect,suspect);
+        }
+        String report=getString(R.string.crime_report,item.getmTitle(),dateString,suspect,solvedString);
+        return report;
+    }
+
 }

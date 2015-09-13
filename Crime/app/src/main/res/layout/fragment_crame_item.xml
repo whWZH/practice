@@ -64,6 +64,27 @@
         android:layout_marginRight="16dp"
         android:id="@+id/cerame_solve"
         android:text="@string/crime_solve"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/crime_suspectButton"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/crime_suspect_text"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/crime_reportButton"
+        android:text="@string/crime_report_text"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/crime_dialButton"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="打电话给"/>
 
 
 </LinearLayout>

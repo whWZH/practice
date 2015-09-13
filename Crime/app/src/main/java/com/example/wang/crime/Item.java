@@ -19,11 +19,24 @@ public class Item {
     private static final String JSON_SOLVED="solved";
     private static final String JSON_DATE="date";
     private static final String JSON_PHOTO="photo";
+    private static final String JSON_SUSPECT="suspect";
+    private static final String JSON_NUMBER="number";
     private UUID mId;
+    private String mSuspect;
     private String mTitle;
     private Date mData=new Date();
     private boolean mSolved;
     private Photo mPhoto;
+    private String mNumber;
+
+    public void setmNumber(String mNumber) {
+        this.mNumber = mNumber;
+    }
+
+    public String getmNumber() {
+        return mNumber;
+    }
+
     public Item(){
         mId=UUID.randomUUID();
     }
@@ -37,6 +50,10 @@ public class Item {
         if (mPhoto!=null){
             json.put(JSON_PHOTO,mPhoto.toJSON());
         }
+        if (mNumber!=null){
+            json.put(JSON_NUMBER,mNumber);
+        }
+        json.put(JSON_SUSPECT,mSuspect);
         return json;
     }
     public UUID getmId() {
@@ -75,11 +92,24 @@ public class Item {
         if (json.has(JSON_PHOTO)){
             mPhoto=new Photo(json.getJSONObject(JSON_PHOTO));
         }
+        if (json.has(JSON_SUSPECT)){
+            mSuspect=json.getString(JSON_SUSPECT);
+        }
+        if (json.has(JSON_NUMBER)){
+            mNumber=json.getString(JSON_NUMBER);
+        }
     }
     public Photo getmPhoto(){
         return mPhoto;
     }
     public void setPhoto(Photo p){
         mPhoto=p;
+    }
+    public String getSuspect(){
+        return mSuspect;
+    }
+
+    public void setmSuspect(String mSuspect) {
+        this.mSuspect = mSuspect;
     }
 }

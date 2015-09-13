@@ -17,4 +17,8 @@
     <string name="hide_subtitle">隐藏详情</string>
     <string name="subtitle">如果你看到了什么，请说出来</string>
     <string name="delete_crime">删除</string>
+    <string name="crime_suspect_text">选取犯罪分子</string>
+    <string name="crime_report_text">发送犯罪报告</string>
+    <string name="crime_report">%1$s! 这项犯罪被发现于 %2$s. %3$s,%4$s</string>
+    <string name="crime_report_susupect">犯罪嫌疑人是 %s.</string>
 </resources>
