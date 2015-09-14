@@ -1,5 +1,6 @@
 package com.example.wang.crime;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ListFragment;
 import android.content.Context;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import javax.security.auth.callback.Callback;
+
 /**
  * Created by Administrator on 2015/9/6.
  */
@@ -30,6 +33,23 @@ public class ItemListFragment extends ListFragment {
     private ArrayList<Item> mItems;
     private mAdapter mad;
     private boolean mSubtitleVisible;
+    private Callbacks mCallbacks;
+    public interface Callbacks{
+        void onCrimeselected(Item item);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks= (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks=null;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,10 +67,10 @@ public class ItemListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         Item i= mItems.get(position);
-        Intent intent=new Intent(getActivity(),CrimePagerActivity.class);
-        intent.putExtra("ID", i.getmId());
-//        startActivity(intent);
-        startActivityForResult(intent,0);
+//        Intent intent=new Intent(getActivity(),CrimePagerActivity.class);
+//        intent.putExtra("ID", i.getmId());
+//        startActivityForResult(intent,0);
+        mCallbacks.onCrimeselected(i);
     }
 
     @Override
@@ -82,9 +102,8 @@ public class ItemListFragment extends ListFragment {
             case R.id.menu_item_new_crime:
                 Item item1=new Item();
                 CrimeLab.getsCrimeLab(getActivity()).addCrime(item1);
-                Intent i=new Intent(getActivity(),CrimePagerActivity.class);
-                i.putExtra("ID", item1.getmId());
-                startActivityForResult(i,0);
+                ((mAdapter)getListAdapter()).notifyDataSetChanged();
+                mCallbacks.onCrimeselected(item1);
                 return true;
 //            case R.id.menu_item_show_subtitle:
 //                if (getActivity().getActionBar().getSubtitle()==null){

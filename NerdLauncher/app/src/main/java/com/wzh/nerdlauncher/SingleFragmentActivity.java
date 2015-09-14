@@ -1,4 +1,4 @@
-package com.example.wang.crime;
+package com.wzh.nerdlauncher;
 
 import android.app.Activity;
 import android.os.Bundle;
