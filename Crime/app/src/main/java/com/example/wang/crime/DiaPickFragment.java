@@ -26,6 +26,8 @@ public class DiaPickFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mDate=(Date)getArguments().getSerializable("Date");
+       final int hour=mDate.getHours();
+        final int minis=mDate.getMinutes();
         Calendar calendar=Calendar.getInstance();
         calendar.setTime(mDate);
         int year=calendar.get(Calendar.YEAR);
@@ -37,6 +39,8 @@ public class DiaPickFragment extends DialogFragment {
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 mDate=new GregorianCalendar(year,monthOfYear,dayOfMonth).getTime();
+                mDate.setHours(hour);
+                mDate.setMinutes(minis);
                 getArguments().putSerializable("Date",mDate);
             }
         });

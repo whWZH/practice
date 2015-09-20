@@ -41,9 +41,13 @@ public class TimePickFragment extends DialogFragment {
                 .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent i=new Intent();
-                        i.putExtra("Time",mDate);
-                        getTargetFragment().onActivityResult(1, Activity.RESULT_OK,i);
+                        if (getTargetFragment() == null) {
+                            return;
+                        } else {
+                            Intent i = new Intent();
+                            i.putExtra("Time", mDate);
+                            getTargetFragment().onActivityResult(1, Activity.RESULT_OK, i);
+                        }
                     }
                 })
                 .create();

@@ -60,7 +60,6 @@ public class ThumbnailDownloader<Token> extends HandlerThread {
                 if (msg.what==MESSAGE_DOWNLOAD){
                     @SuppressWarnings("unchecked")
                     Token token= (Token) msg.obj;
-                    System.out.println("获得一个请求");
                     try {
                         handleRequest(token);
                     } catch (IOException e) {
